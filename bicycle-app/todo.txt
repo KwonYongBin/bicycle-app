@@ -1,0 +1,4 @@
+카카오맵 사용처
+
+1. 지도의 마커를 찍는용도 - https://react-kakao-maps-sdk.jaeseokim.dev/docs/sample/overlay/basicMarker
+2. 마커에 해당하는 위치의 자전거 데이터를 뿌려주고싶다(해당 마커를 클릭하면, 정해진 레이아웃? 틀? 에 집어넣기) - 클릭 이벤트는 바인딩

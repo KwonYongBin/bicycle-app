@@ -1,10 +1,18 @@
+import { Map } from 'react-kakao-maps-sdk';
+import useKakaoLoader from './useKakaoLoader';
+import Maps from './Maps';
+
 function App() {
+
+  useKakaoLoader()
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>자전거 앱</h1>
-      </header>
-    </div>
+    <Maps
+      id='map'
+      center={{lat: 33.450701, lng: 126.570667}}
+      style={{width:"80%", height: "800px"}}
+      level={3}
+    />
   );
 }
 
