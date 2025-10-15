@@ -1,5 +1,5 @@
-import React from 'react'
-import { Map, MapMarker} from 'react-kakao-maps-sdk'
+import { Map, MapMarker } from "react-kakao-maps-sdk"
+
 
 const pstList  = [
   { lat: 33.55635, lng: 126.795841, info:"여긴 강남이 아닙니다." },
@@ -7,23 +7,24 @@ const pstList  = [
   { lat: 33.35635, lng: 126.795841, info:"메가커피 환영!" }
 ]
 
-const apiUrl ="https://api.citybik.es/v2/networks/";
-const stations = ["eoulling-sejong","Tashu","nubija-changwon","seoul-bike"];
+function App() {
 
-
-const Maps = (props) => {
   return (
-    <Map {...props} >
-      {
+    <>
+      <Map
+        center={{ lat: 33.5563, lng: 126.79581 }}
+        style={{ width: "100%", height: "360px" }}
+      >
+        {
           pstList.map((pst)=>{
-            return <MapMarker key={pst.lat+pst.lng} position={pst} onClick={ () => {
+            return <MapMarker key={pst.lat+pst.lng} position={pst} onClick={()=>{
               console.log(pst.info);
             }}></MapMarker>
           })
         }
-    </Map>
+      </Map>
+    </>
   )
 }
 
-
-export default Maps;
+export default App
