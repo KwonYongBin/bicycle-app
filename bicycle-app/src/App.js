@@ -9,8 +9,8 @@ function App() {
     <Maps
       id='map'
       center={{lat: 37.575877, lng: 126.976897}}
-      style={{width:"80%", height: "800px"}}
-      level={3}
+      style={{width:"100%", height: "100vh"}}
+      level={4}
     />
   );
 }
