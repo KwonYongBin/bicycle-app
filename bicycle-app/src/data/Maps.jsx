@@ -1,13 +1,30 @@
 import { useEffect, useState } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
-import axiosData from './util/axiosData';
+import axiosData from '../util/axiosData';
+import MarkerData from '../components/MarkerData/MarkerData';
 
-const apiUrl = "https://api.citybik.es/v2/networks/";
-const stations = ["seoul-bike", "eoulling-sejong", "tashu", "nubija-changwon"];
+const apiUrl = "https://api.citybik.es/v2/networks/"; // 공통된 API 기본 주소
+const stations = [
+  // 각 도시별 세부 경로 주소 배열로 저장
+  
+  //서울 따릉이
+  // "seoul-bike",
+  
+  // 세종 어울링
+  // "eoulling-sejong",
+  
+  // 대전 타슈
+  "tashu",
+
+  // 창원 누비자
+  // "nubija-changwon"
+
+];
 
 const Maps = (props) => {
 
-  const [maps, setMaps] = useState([]);
+  const [ maps, setMaps ] = useState([]);
+  const [ selectedMarker, setSelectedMarker ] = useState(null); //마커의 정보를 담고있는 컴포넌트 파일을 useState로 관리
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -23,7 +40,7 @@ const Maps = (props) => {
           return data.network.stations;
         });
         setMaps(mapStations);
-      
+
       } catch (error) {
         console.error("데이터를 불러오는데 실패하였습니다.");
       }
@@ -31,29 +48,28 @@ const Maps = (props) => {
     };
     fetchAllData();
   }, [])
-  console.log(maps);
+  // console.log(maps);
 
-  function handleMarkerClickEvent(station){
-    alert(station.name);
-  }
+  // handleMarkerClickEvent
 
   return (
-    <Map {...props} >
-          {maps.map((station) => {
-            console.log(station)
-              return <MapMarker 
-                  key={`${station.id}-${station.latitude}-${station.longitude}`}
-                  position={{lat:station.latitude,lng:station.longitude}}
-                  onClick={()=>{handleMarkerClickEvent(station)}}
-                >
-                </MapMarker>
-            })
-          }
-    </Map>
+    <div style={{display:"flex", justifyContent:"flex-end"}}>
+      <MarkerData data={selectedMarker} onClose={() => {setSelectedMarker(null)}}/>
+      <Map {...props} >
+        {maps.map((station) => {
+          // console.log(station)
+          return <MapMarker
+            key={`${station.id}-${station.latitude}-${station.longitude}`}
+            position={{ lat: station.latitude, lng: station.longitude }}
+            onClick={() => setSelectedMarker(station)}
+          >
+          </MapMarker>
+        })
+        }
+      </Map>
+    </div>
   )
 }
-
-
 export default Maps;
 
 // "stations": [
