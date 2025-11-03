@@ -1,0 +1,220 @@
+.home {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* --- Hero Section --- */
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 49px);
+  transition: opacity 0.4s ease;
+}
+
+.hero-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Hero Text --- */
+.hero-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  z-index: 10;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+}
+
+.hero-text h1 {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.hero-text p {
+  font-size: 1.2rem;
+}
+
+/* --- Swiper Pagination (Custom Dots) --- */
+.swiper-pagination {
+  bottom: 40px !important;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.swiper-pagination-bullet {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.4);
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+
+.swiper-pagination-bullet-active {
+  width: 80px;
+  height: 6px;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  box-shadow: 0 0 10px rgba(0, 198, 255, 0.7);
+}
+
+/* --- 공통 섹션 --- */
+.section {
+  padding: 120px 20px;
+  text-align: center;
+}
+
+.section h2 {
+  font-size: 28px;
+  margin-bottom: 40px;
+}
+
+/* --- 자전거 판매 --- */
+.bike-grid {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.bike-card {
+  width: 400px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s;
+}
+
+.bike-card:hover {
+  transform: translateY(-6px);
+}
+
+.bike-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+/* --- 버튼 스타일 --- */
+.btn-primary,
+.btn-outline,
+.btn-outline2 {
+  display: inline-block;
+  border-radius: 25px;
+  padding: 10px 24px;
+  text-decoration: none;
+  transition: 0.3s;
+  margin-top: 40px;
+}
+
+.btn-primary {
+  background-color: #0077cc;
+  color: white;
+  border: 1px solid transparent;
+}
+
+.btn-primary:hover {
+  /* background-color: #005fa3; */
+  background-color: #fff;
+  color: #0077cc;
+  border: 1px solid #0077cc;
+}
+
+.btn-outline {
+  border: 1px solid #0077cc;
+  color: #0077cc;
+}
+
+.btn-outline:hover {
+  background-color: #0077cc;
+  color: white;
+}
+
+.btn-outline2 {
+  border: 1px solid white;
+  color: white;
+}
+
+.btn-outline2:hover {
+  background-color: white;
+  color: #0077cc;
+}
+
+/* --- 대여 섹션 --- */
+.rental {
+  position: relative;
+  background: url('/public/images/home_travel_bike_pc.png') center/cover no-repeat;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .rental {
+    background: url('/public/images/home_travel_bike_mobile.png') center/cover no-repeat;
+  }
+}
+
+/* 밝은 반투명 흰색 오버레이 */
+.rental::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px) brightness(0.9);
+  z-index: 1;
+}
+
+/* 콘텐츠는 위로 */
+.rental * {
+  position: relative;
+  z-index: 2;
+}
+
+.rental h2 {
+  color: #004a99;
+  font-weight: 700;
+}
+
+.rental p {
+  color: #1a1a1a;
+  opacity: 0.8;
+}
+
+/* --- 여행지 추천 --- */
+.travel-cards {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.travel-card {
+  width: 400px;
+  text-align: center;
+}
+
+.travel-card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+/* --- 고객센터 --- */
+.support {
+  background: linear-gradient(135deg, #0077cc 0%, #66c2ff 100%);
+  color: white;
+  text-align: center;
+  padding: 120px 20px;
+}
