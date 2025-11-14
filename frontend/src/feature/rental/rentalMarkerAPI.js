@@ -1,29 +1,40 @@
-import { axiosData } from "../../utils/dataFetch.js";
+import { axiosData, axiosPost } from "../../utils/dataFetch.js";
 
-// const apiUrl = "https://api.citybik.es/v2/networks/"; // 공통된 API 기본 주소
-// const stations = [
-//     // 각 도시별 세부 경로 주소 배열로 저장
-
-//     //서울 따릉이
-//     "seoul-bike",
-
-//     // 세종 어울링
-//     "eoulling-sejong",
-
-//     // 대전 타슈
-//     "tashu",
-
-//     // 창원 누비자
-//     "nubija-changwon"
-
-// ];
-
-// export const showMarkerAPI = async () => {
-//     const dataPromises = stations.map((stationName) => {
-//         return axiosData(`${apiUrl}${stationName}`);
-//     });
-//     return Promise.all(dataPromises);
-// }
 export const showMarkerAPI = async () => {
         return axiosData("/data/rentalMarker.json");
+}
+
+export const getRentalPayment = (priceInfo, paymentMethod) => async(dispatch, getState) => {
+    const state = getState();
+
+    const selectedStation = state.rentalData.selectedStation;
+    const userId = state.auth.userId;
+
+    if(!selectedStation || !userId) {
+        console.error("결제 실패: 사용자 정보 또는 대여소 정보 누락");
+        return {status:"FAILURE", message:"필수 데이터 누락"};
+    }
+
+    const rentalPayload = {
+        paymentAmount: priceInfo,
+        userId: userId,
+        stationId: selectedStation.stationId,
+        stationName: selectedStation.name,
+        paymentMethod:paymentMethod
+    };
+    console.log("결제 이벤트 >>", rentalPayload);
+    
+
+    try {
+        const url = "http://localhost:8080/payment";
+        const result = await axiosPost(url, rentalPayload);
+
+        console.log("백엔드로부터의 최종 응답:", result);
+
+        return result;
+    } catch(error) {
+        console.error("결제 요청 중 서버 통신 에러 발생:", error);
+        return { status: "ERROR", message: error.message };
+    }
+
 }
