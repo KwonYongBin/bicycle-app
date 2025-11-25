@@ -4,26 +4,74 @@
     일반 로그인의 경우 아이디(test), 비밀번호(1234)를 입력하면 islogin=true로 바뀌고, 이에따라 페이지 하단이 변경됩니다. 
 */
 import '../styles/loginpage.css';
-import {useState,useRef} from 'react';
+import {useState,useRef,useEffect} from 'react';
 import { useDispatch,useSelector } from 'react-redux';
-import { getLogin,getFlatformName} from '../feature/auth/authAPI';
-import { Link } from 'react-router-dom';
+import { getLogin,getFlatformName,randomString8to16,getLogout} from '../feature/auth/authAPI';
+import { Link,useLocation,useNavigate } from 'react-router-dom';
+import { useAuth } from "../feature/auth/authContext";
 export function Login() {
-    //플랫폼에 oauth 요청을 위한 필요 정보 값.
-    const Rest_api_key='ef9794cb2ff6a12a26f6432f5ec9a04b' //카카오 EST API KEY
-    const NAVER_CLIENT_ID = "qxdiERkzD3t06kqHGYdp"; // 네이버 발급받은 Client ID
-    const STATE = "flase";
+    const navigate=useNavigate();
+    const location = useLocation();
+    const state = location.state;
+    const initialized = useRef(false);
+    const { login, logout } = useAuth();
 
-    const redirect_uri = 'http://localhost:3000/auth' //Redirect URI
+    useEffect(() => {//소셜 로그인 시 자동 로그인을 통해 세션 아이디 발급받기.
+        if(!initialized.current)
+        {
+            initialized.current = true;
+            console.log("attemptAutoLogin");
+            if(state)
+            {
+                const autoauthjwToken = state.authjwToken; // state에서 authjwToken 추출.
+                const param = null;
+                const autoFormData = {uid : autoauthjwToken , socialDupl: true}
+
+                const attemptAutoLogin = async () => {
+                    console.log("attemptAutoLogin123123123");
+                    const success = await dispatch(getLogin(autoFormData, param));
+                    if (success) {
+                        console.log("lego");
+                        navigate('/');
+                    }
+                    else {
+                        console.log("attemptfail");
+                        alert("소셜로그인 실패. 재시도 부탁드립니다.")
+                        navigate('/login');
+                    }
+                }
+                attemptAutoLogin();
+            }
+        }
+    },[location.state]);
+
+    //플랫폼에 oauth 요청을 위한 필요 정보 값.
+    const Rest_api_key='ef9794cb2ff6a12a26f6432f5ec9a04b';//카카오 EST API KEY
+    const NAVER_CLIENT_ID = "qxdiERkzD3t06kqHGYdp"; // 네이버 발급받은 Client ID
+    const GOOGLE_CLIENT_ID = "308480962204-8kq5mtbgf2o8fk1stqa7tdv72kmrm5rq.apps.googleusercontent.com"; // 네이버 발급받은 Client ID
+    const STATE = randomString8to16();
+
+
+    
+    const hostName = new URL(window.location.href).hostname;
+    let redirect_uri = ""
+    if(hostName==="localhost")
+    {
+        redirect_uri = 'http://localhost:3000/auth'
+    }
+    else{
+        redirect_uri = 'http://'+hostName+':3000/auth'
+    } //Redirect URI
     // 플랫폼별 oauth 요청 URL
     const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`
     const NAVER_AUTH_URL = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&state=${STATE}&redirect_uri=${redirect_uri}`;
+    const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirect_uri}&response_type=token&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile`;
 
     //로그인 여부 확인
     const isLogin = useSelector((state)=>state.auth.isLogin)
     
     //소셜로그인이 아닌 일반 로그인을 위한 값 세팅.
-    const initialsetting = {id:"",pass : ""};
+    const initialsetting = {uid:"",upass : ""};//이쪽은 param이 null이 아니라 socialDupl 넣을 필요 없다
     const [formData,setFormData] = useState(initialsetting);
     const [errors,setErrors] = useState(initialsetting);
     const idRef = useRef(null);
@@ -34,15 +82,18 @@ export function Login() {
         const flatformName = e.target.id;
         if(flatformName === "kakao")
         {
-            // 팀프로젝트 업로드를 위해 백엔드쪽으로 가는 길 임시 차단.
             sessionStorage.setItem("social","kakao");
             window.location.href = kakaoURL;
         }
         else if (flatformName === "naver")
         {
-            // 팀프로젝트 업로드를 위해 백엔드쪽으로 가는 길 임시 차단.
             sessionStorage.setItem("social","naver");
             window.location.href = NAVER_AUTH_URL;
+        }
+        else if (flatformName === "google")
+        {
+            sessionStorage.setItem("social","google");
+            window.location.href = GOOGLE_AUTH_URL;
         }
     }
 
@@ -56,7 +107,7 @@ export function Login() {
     }
 
     //제출버튼을 누르면 변화 발생. - 미완성(에러는 없음)
-    const handleLoginSubmit = (e)=>{
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
         const param = {
             idRef : idRef,
@@ -64,11 +115,33 @@ export function Login() {
             setErrors : setErrors,
             errors : errors
         }
-
-        const succ = dispatch(getLogin(formData,param));
+        const succ = await dispatch(getLogin(formData,param));
+        console.log(succ)
+        if(succ)
+        {
+            await login();
+            navigate('/');
+        }
+        else{
+            alert("로그인에 실패, 확인후 다시 진행해주세요.");
+            setFormData({uid:"", upass:""});
+            idRef.current.focus();
+        }
         
     }
+    const handleLogOut= async () =>{
+        if(sessionStorage.getItem("social")){
+            alert("소셜상태에서 로그아웃 하셨습니다.");
+        }
+        else{
 
+        }
+        dispatch(getLogout());
+        alert("로그아웃 하셨습니다.");
+        await logout();
+        sessionStorage.removeItem("social");
+        navigate('/');
+        }
     return (
         <>
             <div className='loginCenter'>
@@ -79,20 +152,19 @@ export function Login() {
                             <li>
                                 {/* 아이디와 비밀번호를 네이버처럼 floating label을 해보려 시도했지만, 상당한 시간이 걸렸음에도 진행되지 아니하여 다른거 먼저함 */}
                                 <div className='loginDataBox'>아이디 : <input type="text" 
-                                        name="id"
+                                        name="uid"
                                         onChange={handleformchange}
                                         ref = {idRef}
                                         placeholder='아이디'/>
                                 </div>
-                                <span>{errors.id}</span>
                             </li>
                             <li>
                                 <div className='loginDataBox'>비밀번호 : <input type="password"
-                                        name="pass"
+                                        name="upass"
                                         onChange={handleformchange}
-                                        ref= {passRef}/>
+                                        ref= {passRef}
+                                        placeholder='비밀번호'/>
                                 </div>
-                                <span>{errors.pass}</span>
                             </li>
                             <ul>
                                 <li><button type = "submit">로그인</button></li>
@@ -105,16 +177,17 @@ export function Login() {
                         <div className='socialButtonWrapper'>
                             <button onClick={handleSocialLogin} id = "kakao">카카오 로그인</button>
                             <button onClick={handleSocialLogin} id = "naver">네이버 로그인</button>
-                            <button onClick={handleSocialLogin} id = "google">구글 로그인</button> {/* ⭐ 구글 버튼 추가 */}
+                            <button onClick={handleSocialLogin} id = "google">구글 로그인</button>
                         </div>
                     </div>
                     <>
                         {isLogin?
                         <>
-                        <h1>12123213</h1>
+                        <h1>로그인 상태</h1>
                         <Link to="/">홈</Link>
+                        <button onClick={handleLogOut}>로그아웃</button>
                         </>:
-                        <h1>44444444444444</h1>}
+                        <h1>비 로그인 상태</h1>}
                     </>
                 </div>
                 <div className='loginBottomLinks'> 

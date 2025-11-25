@@ -1,29 +1,70 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../styles/cart/cartshipping.css'
+import {useDispatch, useSelector} from "react-redux";
+import {setOrderInfo, setReceiverInfo, toggleSameOrderer, userOrderInfo} from "../../feature/cart/cartSlice.js";
 
-export function CartShippingInfo() {
+export default function CartShippingInfo() {
+    const dispatch = useDispatch();
+    const cartList = useSelector((state) => state.cart.cartList);
+    const {orderInfo, receiverInfo} = useSelector(state => state.cart);
+    useEffect(() => {
+        if (cartList && cartList.length > 0) {
+            dispatch(userOrderInfo(cartList[0]))
+        }
+    }, [cartList, dispatch]);
+
+    const handleOrderChange = (e) => {
+        const { name, value } = e.target;
+        dispatch(setOrderInfo({name,value}));
+    };
+
+    const handleReceiverChange = (e) => {
+        const { name,value} = e.target;
+        dispatch(setReceiverInfo({name,value}));
+    }
+
+    const handleSameCheck = (isSame) => {
+        dispatch(toggleSameOrderer(isSame));
+    }
     return (
         <div className="checkout-info-container">
-            {/* 1. 주문자 정보 섹션 */}
             <div className="form-section">
                 <h2 className="form-section-title">주문자 정보</h2>
                 <div className="form-grid">
                     <div className="form-group">
                         <label htmlFor="orderer-name">주문자명 <span className="required">*</span></label>
                         <div className="input-wrapper">
-                            <input type="text" id="orderer-name"/>
+                            <input
+                                type="text"
+                                id="orderer-name"
+                                name="name"
+                                value={orderInfo.name}
+                                onChange={handleOrderChange}
+                            />
                         </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="orderer-mobile" style={{marginLeft:'10px'}}>휴대폰번호 <span className="required">*</span></label>
                         <div className="input-wrapper">
-                            <input type="text" id="orderer-mobile"/>
+                            <input
+                                type="text"
+                                id="orderer-mobile"
+                                name="mobile"
+                                value={orderInfo.mobile}
+                                onChange={handleOrderChange}
+                            />
                         </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="orderer-email">이메일 <span className="required">*</span></label>
                         <div className="input-wrapper">
-                            <input type="email" id="orderer-email"/>
+                            <input
+                                type="email"
+                                id="orderer-email"
+                                name="email"
+                                value={orderInfo.email}
+                                onChange={handleOrderChange}
+                            />
                         </div>
                     </div>
                 </div>
@@ -35,23 +76,39 @@ export function CartShippingInfo() {
                     <h2 className="form-section-title">수령인 정보</h2>
                     <div className="recipient-actions">
                         <div className="radio-group">
-                            <input type="radio" id="same-as-orderer" name="recipient-type" defaultChecked />
+                            <input
+                                type="radio"
+                                id="same-as-orderer"
+                                name="recipient-type"
+                                checked={receiverInfo.isSame}
+                                onChange={() => handleSameCheck(true)}
+                            />
                             <label htmlFor="same-as-orderer">주문자와 동일</label>
-                            <input type="radio" id="new-address" name="recipient-type" />
+                            <input
+                                type="radio"
+                                id="new-address"
+                                name="recipient-type"
+                                checked={!receiverInfo.isSame}
+                                onChange={() => handleSameCheck(false)}
+                            />
                             <label htmlFor="new-address">새로운주소</label>
                         </div>
                     </div>
                 </div>
-
                 <div className="form-grid">
                     <div className="form-group">
                         <label htmlFor="recipient-name">수령자명 <span className="required">*</span></label>
                         <div className="input-wrapper">
-                            <input type="text" id="recipient-name"/>
+                            <input
+                                type="text"
+                                id="recipient-name"
+                                name="name"
+                                value={receiverInfo.name}
+                                onChange={handleReceiverChange}
+                            />
                         </div>
                     </div>
                     <div className="form-group">
-                        {/* 이미지상 비어있는 오른쪽 셀 (레이아웃 유지용) */}
                     </div>
                     <div className="form-group">
                         <label htmlFor="recipient-contact">연락처</label>
@@ -62,19 +119,26 @@ export function CartShippingInfo() {
                     <div className="form-group">
                         <label htmlFor="recipient-mobile" style={{marginLeft:'10px'}}>휴대폰번호 <span className="required">*</span></label>
                         <div className="input-wrapper">
-                            <input type="text" id="recipient-mobile"/>
-                            {/* 이미지에는 X 버튼이 없어서 여기도 뺐습니다. */}
+                            <input
+                                type="text"
+                                id="recipient-mobile"
+                                name="mobile"
+                                value={receiverInfo.mobile}
+                                onChange={handleReceiverChange}
+                            />
                         </div>
                     </div>
-
-                    {/* 주소 필드 (2열 합침) */}
                     <div className="form-group form-group-address">
                         <label htmlFor="recipient-zipcode">주소 <span className="required">*</span></label>
                         <div className="address-group">
-                            <input type="text" id="recipient-address1" className="input-address" />
-                            {/*<div className="address-detail-group">*/}
-                            {/*    <input type="text" id="recipient-address2" className="input-address-detail" />*/}
-                            {/*</div>*/}
+                            <input
+                                type="text"
+                                id="recipient-address1"
+                                name="address"
+                                value={receiverInfo.address}
+                                onChange={handleReceiverChange}
+                                className="input-address"
+                            />
                         </div>
                     </div>
 
@@ -83,3 +147,4 @@ export function CartShippingInfo() {
         </div>
     );
 }
+

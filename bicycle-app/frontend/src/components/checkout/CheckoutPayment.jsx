@@ -1,4 +1,98 @@
-export function CheckoutPayment({ totalPrice}) {
+import {useEffect, useRef, useState} from "react";
+import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
+
+const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY;
+
+export function CheckoutPayment({ totalPrice, cartList }) {
+    const widgetRef = useRef(null);
+    // const paymentMethodsWidgetRef = useRef(null);
+    // const agreementWidgetRef = useRef(null);
+    // const [orderId, setOrderId] = useState(null);
+    useEffect(() => {
+        let isCancelled = false;
+
+        const initializeWidget = async () => {
+            try {
+                const tossPayments = await loadTossPayments(clientKey);
+                if (isCancelled) return;
+
+                const widgets = tossPayments.widgets({
+                    customerKey: ANONYMOUS,
+                });
+
+                await widgets.setAmount({
+                    currency: "KRW",
+                    value: totalPrice,
+                });
+
+                if (isCancelled) return; // await 후에도 체크
+
+                widgetRef.current = widgets;
+
+                const methodContainer = document.getElementById("payment-methods");
+                if (methodContainer && methodContainer.innerHTML === "") {
+                    await widgets.renderPaymentMethods({
+                        selector: "#payment-methods",
+                        variantKey: "DEFAULT",
+                    });
+                }
+
+                const agreementContainer = document.getElementById("payment-agreement");
+                if (agreementContainer && agreementContainer.innerHTML === "") {
+                    await widgets.renderAgreement({
+                        selector: "#payment-agreement",
+                        variantKey: "DEFAULT",
+                    });
+                }
+
+            } catch (error) {
+                console.error("Error initializing widgets:", error);
+            }
+        };
+
+        initializeWidget();
+        return () => {
+            isCancelled = true;
+            const paymentMethods = document.getElementById("payment-methods");
+            if (paymentMethods) paymentMethods.innerHTML = "";
+
+            const agreement = document.getElementById("payment-agreement");
+            if (agreement) agreement.innerHTML = "";
+        };
+    }, []);
+
+    const handlePayment = async () => {
+        const widgets = widgetRef.current;
+
+        if (!widgets || totalPrice <= 0) {
+            alert("결제 위젯이 준비되지 않았거나 결제 금액이 올바르지 않습니다.");
+            return;
+        }
+
+        let formattedOrderName = "주문 상품"; // 기본값
+        if (cartList && cartList.length > 0) {
+            const firstItemName = cartList[0].name;
+            const remainingItemsCount = cartList.length - 1;
+
+            if (remainingItemsCount > 0) {
+                formattedOrderName = `${firstItemName} 외 ${remainingItemsCount}건`;
+            } else {
+                formattedOrderName = firstItemName;
+            }
+        }
+        try {
+            await widgets.requestPayment({
+                orderId: `practice-order-${new Date().getTime()}`,
+                orderName: formattedOrderName,
+                successUrl: `${window.location.origin}/checkout/success`,
+                failUrl: `${window.location.origin}/checkout/fail`,
+            });
+        } catch (error) {
+            console.error("Payment error:", error); //
+            alert(`결제 중 오류가 발생했습니다: ${error.message}`);
+        }
+    };
+
     return (
         <div className="payment-summary-box">
             <h3>최종 결제 금액</h3>
@@ -15,30 +109,22 @@ export function CheckoutPayment({ totalPrice}) {
                     <span className="label">총 배송비</span>
                     <span className="value">+0원</span>
                 </div>
-
                 <div className="final-price-row">
                     <span className="label">최종 결제 금액</span>
                     <span className="value">{totalPrice.toLocaleString()}원</span>
                 </div>
             </div>
 
-            <div className="agreement-section">
-                <div className="agreement-item">
-                    <input type="checkbox" id="agree-all" />
-                    <label htmlFor="agree-all">
-                        <strong>(필수)</strong> 주문할 제품의 제품명, 옵션, 제품가격, 배송 정보를 확인하였으며, 구매에 동의합니다.
-                    </label>
-                </div>
-                <div className="agreement-item">
-                    <input type="checkbox" id="agree-terms" />
-                    <label htmlFor="agree-terms">
-                        <strong>(필수)</strong> 개인정보 제3자 제공/위탁동의
-                    </label>
-                </div>
-            </div>
+            <div id="payment-methods" />
+            <div id="payment-agreement" />
             <div className="payment-button-section">
-                <button className="payment-button">카카오페이 결제하기</button>
-                <button className="payment-button">네이버페이 결제하기</button>
+                <button
+                    className="payment-button"
+                    onClick={handlePayment} // 12번 함수 연결
+                    disabled={totalPrice <= 0}
+                >
+                    {totalPrice > 0 ? `${totalPrice.toLocaleString()}원 결제하기` : "결제할 금액이 없습니다"}
+                </button>
             </div>
         </div>
     );

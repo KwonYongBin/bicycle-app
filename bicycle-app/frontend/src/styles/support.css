@@ -1,7 +1,7 @@
 /* 고객센터 */
 .support-page {
   text-align: center;
-  padding: 60px 20px;
+  padding: 140px 20px 60px 20px;
 }
 
 .support-title {
@@ -263,6 +263,10 @@
   border-color: #222;
 }
 
+.pagination button.active:hover {
+  background: #222;
+}
+
 .pagination button:disabled {
   color: #aaa;
   cursor: not-allowed;
@@ -517,15 +521,13 @@
   background-color: #0077cc;
   color: white;
   text-decoration: none;
+  border: none;
   border-radius: 10px;
   font-size: 0.9rem;
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
 .chatbot-link-btn:hover {
   background-color: #005fa3;
-}
-
-.chatbot-link-btn i {
-  font-size: 0.75rem;
 }

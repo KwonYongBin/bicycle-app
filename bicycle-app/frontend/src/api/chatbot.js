@@ -1,12 +1,27 @@
-// src/api/chatbot.js
 import axios from "axios";
+import { getApiBase } from "../feature/auth/getApiBase.js";
+
+const API_BASE = getApiBase();
 
 export const getChatbotResponse = async (userMessage) => {
   try {
-    const response = await axios.post("http://localhost:8080/api/chatbot", {
-      message: userMessage,
-    });
-    // ✅ reply, linkText, linkUrl 전부 반환
+    const csrfToken = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("XSRF-TOKEN="))
+      ?.split("=")[1];
+
+    const response = await axios.post(
+      `${API_BASE}/api/chatbot`,
+      { message: userMessage },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-XSRF-TOKEN": csrfToken || "",
+        },
+        withCredentials: true,
+      }
+    );
+
     return response.data;
   } catch (error) {
     console.error("Chatbot API Error:", error);

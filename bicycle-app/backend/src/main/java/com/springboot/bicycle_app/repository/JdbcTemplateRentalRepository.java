@@ -1,55 +1,63 @@
 package com.springboot.bicycle_app.repository;
 
-import com.springboot.bicycle_app.dto.RentalPayment;
+import com.springboot.bicycle_app.dto.RentalPaymentRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Optional;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 @Repository
 public class JdbcTemplateRentalRepository implements RentalRepository {
+    private final JdbcTemplate jdbcTemplate;
 
-    private final NamedParameterJdbcTemplate namedJdbcTemplate;
-
-    // 생성자 주입을 통해 JdbcTemplate을 받음.
+    @Autowired
     public JdbcTemplateRentalRepository(JdbcTemplate jdbcTemplate) {
-        this.namedJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
-    public Long save(RentalPayment payment) {
-        final String sql = "INSERT INTO rental_payment " +
-                "(payment_amount, user_id, station_id, station_name, payment_method, payment_status, created_at) " +
-                "VALUES (:paymentAmount, :userId, :stationId, :stationName, :paymentMethod, :paymentStatus, :createdAt)";
+    public String saveRental(RentalPaymentRequest request) {
+
+        final String sql = "insert into rental_history (user_id, station_name, station_id, amount, method, start_time) VALUES (?, ?, ?, ?, ?, NOW())";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        // BeanPropertySqlParameterSource를 사용해 Model의 필드를 SQL 파라미터로 매핑
+        try {
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-        namedJdbcTemplate.update(sql, new BeanPropertySqlParameterSource(payment), keyHolder, new String[]{"id"});
+                // 1. user_id (VARCHAR - 공식적인 FK)
+                ps.setString(1, request.getUserId());
 
-        // 생성된 PK를 반환합니다. (결제사 요청 시 DB ID가 필요)
-        return keyHolder.getKey().longValue();
-    }
+                // 2. station_name (VARCAR)
+                ps.setString(2, request.getStationName());
 
-    // 다른 메서드들은 복잡하므로 여기서는 생략하고, 가장 중요한 save만 구현
-    // findById, updatePaymentStatus 등의 메서드를 구현
+                // 3. station_id (VARCHAR)
+                ps.setString(3, request.getStationId());
 
-    @Override
-    public Optional<RentalPayment> findById(Long id) {
-        // (조회 로직 구현)
-        return Optional.empty(); // 더미 반환
-    }
+                // 4. amount (BIGINT)
+                ps.setLong(4, request.getPaymentAmount());
 
-    @Override
-    public int updatePaymentAfterReady(Long id, String transactionId, String status) {
-        // (업데이트 로직 구현)
-        return 1; // 더미 반환
+                // 5. method (VARCHAR)
+                ps.setString(5, request.getPaymentMethod());
+
+                return ps;
+            }, keyHolder);
+
+        } catch (DataAccessException e) {
+            System.err.println("🚨 CRITICAL DB INSERTION ERROR 🚨");
+            System.err.println("Exception: " + e.getMessage());
+            if(e.getRootCause() != null) {
+                System.err.println("Root Cause: " + e.getRootCause().getMessage());
+            }
+            return null;
+        }
+
+        return keyHolder.getKey() != null ? keyHolder.getKey().toString() : null;
     }
 }

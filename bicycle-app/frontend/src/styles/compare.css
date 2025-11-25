@@ -87,6 +87,7 @@
 /* 스펙 내용 (제품별) */
 .compare-table tbody td:not(.spec-name) {
     border-left: 1px solid #eee;
+
 }
 
 /* 메인 스펙 (설명) */
@@ -96,6 +97,7 @@
 .spec-description ul {
     padding-left: 20px;
     margin: 0;
+    text-align: center;
 }
 .spec-description li {
     font-size: 0.9rem;
@@ -115,4 +117,17 @@
     font-size: 1.1rem;
     color: #777;
     margin: 0.5rem 0;
+}
+/* '자전거 구매' 버튼 스타일 */
+.empty-compare button {
+    /* '주문하기' 버튼과 동일한 스타일 적용 */
+    background-color: #d9534f; /* 붉은색 */
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }

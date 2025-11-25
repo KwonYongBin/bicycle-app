@@ -4,7 +4,7 @@
     "question": "환불이나 교환은 어떻게 하나요?",
     "answer": "제품 환불 및 교환은 배송 완료 후 7일 이내 고객센터(☎ 02-1234-5678)로 문의해주세요.",
     "linkText": "교환/반품 안내 보기",
-    "linkUrl": "/support"
+    "linkUrl": "/support/faq"
   },
   {
     "keyword": "배송,택배,배송비",
@@ -18,14 +18,14 @@
     "question": "제 키에 맞는 자전거 사이즈를 알고 싶어요",
     "answer": "자전거 사이즈는 키와 인심 길이에 따라 달라요. 평균적으로 170cm면 52~54cm가 적당합니다. 🚴‍♂️",
     "linkText": "사이즈 가이드 보기",
-    "linkUrl": "/support"
+    "linkUrl": "/support/faq"
   },
   {
     "keyword": "고장,수리,as,a/s",
     "question": "자전거가 고장 났어요. A/S 받을 수 있나요?",
     "answer": "A/S는 구매일로부터 1년간 무상 제공됩니다. 자세한 내용은 고객센터로 문의해주세요. ☎ 02-1234-5678",
-    "linkText": "A/S 안내",
-    "linkUrl": "/support"
+    "linkText": "A/S 안내 바로가기",
+    "linkUrl": "/support/asinfo"
   },
   {
     "keyword": "영업시간,운영시간,문의,고객센터",
@@ -39,14 +39,14 @@
     "question": "주문을 취소하고 싶어요",
     "answer": "주문 취소는 결제 완료 후 상품 준비 전까지만 가능합니다. 자세한 내용은 아래에서 확인해주세요.",
     "linkText": "주문 취소 안내",
-    "linkUrl": "/support"
+    "linkUrl": "/cart"
   },
   {
     "keyword": "자료실,카탈로그,설명서,사용법",
     "question": "자전거 설명서나 카탈로그를 보고 싶어요",
     "answer": "카탈로그 및 사용설명서는 아래 자료실에서 확인하실 수 있습니다. 📘",
     "linkText": "자료실 바로가기",
-    "linkUrl": "/support"
+    "linkUrl": "/support/resources"
   },
   {
     "keyword": "회원가입,로그인,비밀번호,계정",
@@ -60,14 +60,21 @@
     "question": "결제 수단은 어떤 게 있나요?",
     "answer": "신용카드, 카카오페이, 무통장입금이 가능합니다 💳 영수증은 마이페이지에서 출력하실 수 있습니다.",
     "linkText": "결제 안내 보기",
-    "linkUrl": "/support"
+    "linkUrl": "/cart"
   },
   {
-    "keyword": "리뷰,후기,평가,별점",
-    "question": "상품 리뷰는 어디서 볼 수 있나요?",
-    "answer": "각 상품 상세페이지 하단에서 리뷰를 확인하고 작성할 수 있습니다. 📝",
-    "linkText": "인기 상품 보러가기",
-    "linkUrl": "/products/mountain"
+    "keyword": "제품,제품 정보,상품,상품 정보,산악,로드,라이프스타일,전기",
+    "question": "제품은 어디서 볼 수 있나요?",
+    "answer": "각 제품 상세페이지에서 확인하실 수 있습니다. 📝",
+    "linkText": "산악, 로드, 라이프스타일, 전기",
+    "linkUrl": "/products/mountain, /products/road, /products/lifestyle, /products/electric"
+  },
+  {
+    "keyword": "비교,제품 비교,상품 비교",
+    "question": "제품은 어떻게 비교할 수 있나요?",
+    "answer": "제품 비교페이지에서 확인하실 수 있습니다. 📝",
+    "linkText": "제품 비교하기",
+    "linkUrl": "/compare"
   },
   {
     "keyword": "약관,이용약관,개인정보,관리규정",
@@ -110,5 +117,12 @@
     "answer": "간단한 회원가입 후 원하는 위치의 자전거를 선택해 예약할 수 있습니다. 📅 대여 방법을 아래에서 자세히 확인하세요.",
     "linkText": "대여 절차 안내",
     "linkUrl": "/rental"
+  },
+  {
+    "keyword": "게시판,게시글,게시,뉴스,이벤트,리뷰,후기",
+    "question": "커뮤니티에서 다양한 정보를 얻고 싶어요.",
+    "answer": "간단한 회원가입 후 원하는 위치의 자전거를 선택해 예약할 수 있습니다. 📅 대여 방법을 아래에서 자세히 확인하세요.",
+    "linkText": "뉴스, 이벤트, 리뷰",
+    "linkUrl": "/board/news, /board/event, /board/review"
   }
 ]
