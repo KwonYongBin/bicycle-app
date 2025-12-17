@@ -1,6 +1,6 @@
 1-1. 대여 자전거 마커 출력 (React)
-sequenceDiagram
 ```mermaid
+sequenceDiagram
     participant User
     participant Frontend as Frontend (Rental.jsx)
     participant API as JSON (Marker API)
