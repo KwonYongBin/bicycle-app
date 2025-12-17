@@ -31,7 +31,8 @@
 
         User ->> Frontend_1: 마커 클릭
         Frontend_1 ->> Frontend_2: RentalInfo.jsx 호출
-        Frontend_2 -->> FrontEnd_1: Rental.jsx 렌더링
+        Frontend_2 -->> Frontend_1: Rental.jsx 렌더링
+        Frontend_1 -->> User: 브라우저 RentalInfo.jsx 출력
 ```
 
 <!-- 1. 대여 자전거 마커 출력 (Next.js Migration)
