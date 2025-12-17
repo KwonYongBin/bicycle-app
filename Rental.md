@@ -1,4 +1,4 @@
-1. 대여 자전거 마커 출력 (React)
+1. 대여 자전거 마커 출력
 ```mermaid
     sequenceDiagram
         participant User
@@ -49,17 +49,21 @@
 
 4. 대여 자전거 결제 과정 및 결과 출력
 ```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend as Frontend (React)
-    participant Backend as Backend (Spring Boot)
-    participant DB as Database (MySQL)
+    sequenceDiagram
+        participant User
+        participant Frontend as Frontend (React)
+        participant Backend as Backend (Spring Boot)
+        participant DB as Database (MySQL)
 
-    %% 1. 대표 여행지 마커 출력
-    User->>Frontend: 여행지 추천 페이지 접속 (/travel)
-    Frontend->>Backend: GET /map/all (API 요청)
-    Backend->>DB: 조회: findAll()
-    DB-->>Backend: List 반환
-    Backend-->>Frontend: Map List (JSON) 반환    
-    Frontend-->>User: 지도에 대표 여행지 마커 출력
+        User ->> Frontend: 결제 완료 (클라이언트 사이드 완료)
+        
+        Note over Frontend, Backend: [데이터 검증 및 결과 조회]
+        Frontend ->> Backend: GET /api/rental/status?orderId={id}
+        
+        Backend ->> DB: RentalRepository.findByOrderId(orderId) 실행
+        DB -->> Backend: rental_history 레코드 반환
+        
+        Note over Backend, Frontend: [최종 결과 전송]
+        Backend -->> Frontend: RentalStatusDetails (자전거번호, 가격, 모델 등) 전달
+        Frontend -->> User: 브라우저에 "대여 및 결제 완료!" 화면 출력
 ```
