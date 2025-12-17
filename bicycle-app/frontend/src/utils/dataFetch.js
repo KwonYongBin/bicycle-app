@@ -21,7 +21,7 @@ export const groupByRows = (array, number) => {
  * axios 함수를 이용하여 데이터 가져오기
  */
 
-export const axiosData = async(url) => { 
+export const axiosData = async(url) => {
     const response = await axios.get(url);
     return response.data;
 }
