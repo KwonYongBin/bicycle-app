@@ -42,54 +42,24 @@
         participant Frontend_2 as Frontend_2 (RentalInfo.jsx)
         participant Frontend_3 as Frontend_3 (RentalPayment.jsx)
 
-        User ->> Frontend_1: 마커 클릭
         Frontend_2 ->> Frontend_3: RentalPayment.jsx 호출
         Frontend_3 -->> Frontend_2: RentalPayment.jsx 렌더링
         Frontend_2 -->> User: 브라우저 RentalPayment.jsx 출력
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 1. 대여 자전거 마커 출력 (Next.js Migration)
+4. 대여 자전거 결제 과정 및 결과 출력
 ```mermaid
 sequenceDiagram
     participant User
-    participant Frontend as Frontend (Rental.jsx)
-    participant Logic as useRentalLogic
-    participant Store as Zustand Store
-    participant API as JSON (Marker API)
-    participant GPS as Geolocation API
+    participant Frontend as Frontend (React)
+    participant Backend as Backend (Spring Boot)
+    participant DB as Database (MySQL)
 
-    User ->> Frontend: 자전거 대여 페이지 접속 (/rental)
-
-    Frontend ->> Logic: useRentalLogic 실행
-
-    Logic -->> API: 비동기 요청 (showMarkerAPI)
-    API -->> Logic: 자전거 전체 데이터 반환
-    Logic ->> Store: bikeList 저장
-
-    Logic -->> GPS: 사용자 위치 요청
-    GPS -->> Logic: 현재 위치 좌표 반환
-    Logic ->> Store: 기준 좌표(latLon) 저장
-
-    Logic ->> Logic: 거리 계산 및 반경 필터링
-    Logic ->> Store: filteredBikeList 저장
-
-    Frontend ->> Store: filteredBikeList 구독
-    Frontend ->> User: 지도에 대여 자전거 마커 출력
-``` -->
+    %% 1. 대표 여행지 마커 출력
+    User->>Frontend: 여행지 추천 페이지 접속 (/travel)
+    Frontend->>Backend: GET /map/all (API 요청)
+    Backend->>DB: 조회: findAll()
+    DB-->>Backend: List 반환
+    Backend-->>Frontend: Map List (JSON) 반환    
+    Frontend-->>User: 지도에 대표 여행지 마커 출력
+```
